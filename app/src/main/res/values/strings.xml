@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">BluetoothTinkeringAndroid</string>
+
+    <string name="bluetooth_not_available">Bluetooth is not available</string>
+    <string name="bluetooth_enabled">Bluetooth enabled</string>
+    <string name="bluetooth_not_enabled">Bluetooth not enabled</string>
+
 </resources>

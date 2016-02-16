@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter mBluetoothAdapter;
     private static final int REQUEST_ENABLE_BT = 1;
-    private static final String TAG = "BluetoothTinkering MainActivity";
+    private static final String TAG = "BTA MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+        // Initialize BluetoothAdapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if (!isBluetoothAvailable()) { return; }
@@ -27,7 +28,31 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Call enable bluetooth system Intent
+        checkBluetoothEnabled();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode)
+        {
+            case REQUEST_ENABLE_BT:
+                enableBluetoothResult(resultCode);
+                break;
+        }
+
+    }
 
     /**
      * Check if bluetooth is available
@@ -37,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     {
         if (mBluetoothAdapter != null) { return true; }
         else {
-            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.bluetooth_not_available), Toast.LENGTH_SHORT).show();
             return false;
         }
     }
@@ -63,41 +88,17 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             // Bluetooth is now enabled, so set up a chat session
             //setupChat();
-            Toast.makeText(this, "Bluetooth enabled", Toast.LENGTH_SHORT).show();
+            // TODO
+            Toast.makeText(this, getString(R.string.bluetooth_enabled), Toast.LENGTH_SHORT).show();
         } else {
             // User did not enable Bluetooth or an error occurred
             Log.d(TAG, "BT not enabled");
-            Toast.makeText(this, "Bluetooth not enabled", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.bluetooth_not_enabled), Toast.LENGTH_SHORT).show();
             finish();
         }
     }
 
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Call enable bluetooth system Intent
-        checkBluetoothEnabled();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode)
-        {
-            case REQUEST_ENABLE_BT:
-                enableBluetoothResult(resultCode);
-                break;
-        }
-
-    }
 }
