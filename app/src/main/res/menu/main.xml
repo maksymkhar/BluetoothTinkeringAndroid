@@ -4,4 +4,7 @@
     <item android:id="@+id/menu_discover"
         android:title="@string/discover"/>
 
+    <item android:id="@+id/menu_paired_devices"
+        android:title="@string/paired_devices"/>
+
 </menu>

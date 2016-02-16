@@ -6,5 +6,6 @@
     <string name="bluetooth_enabled">Bluetooth enabled</string>
     <string name="bluetooth_not_enabled">Bluetooth not enabled</string>
     <string name="discover">Discover</string>
+    <string name="paired_devices">Paired devices</string>
 
 </resources>
