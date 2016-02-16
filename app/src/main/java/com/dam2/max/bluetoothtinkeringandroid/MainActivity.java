@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,7 +54,25 @@ public class MainActivity extends AppCompatActivity {
                 enableBluetoothResult(resultCode);
                 break;
         }
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId())
+        {
+            case R.id.menu_discover:
+                callDiscoverableIntent();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -98,7 +119,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-
+    /**
+     * Starts discoverable bluetooth Intent
+     */
+    private void callDiscoverableIntent()
+    {
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        startActivity(discoverableIntent);
+    }
 }
