@@ -3,7 +3,10 @@ package com.dam2.max.bluetoothtinkeringandroid;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +22,22 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     private static final String TAG = "BTA MainActivity";
 
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // Add the name and address to an array adapter to show in a ListView
+                //mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                Toast.makeText(MainActivity.this, "Discovered device: " + device.getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            Toast.makeText(MainActivity.this, "No device? :(", Toast.LENGTH_SHORT).show();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +49,21 @@ public class MainActivity extends AppCompatActivity {
 
         if (!isBluetoothAvailable()) { return; }
 
+        registerBroadcasReceiver();
+
+
+
+    }
+
+    private void registerBroadcasReceiver()
+    {
+        // Register the BroadcastReceiver
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+
+        // Register for broadcasts when discovery has finished
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(mReceiver, filter);
     }
 
     /**
@@ -86,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(discoverableIntent);
     }
 
+    /**
+     * Get all paired devices
+     */
     private void getPairedDevices()
     {
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -104,7 +141,17 @@ public class MainActivity extends AppCompatActivity {
         {
             Toast.makeText(this, "No devices paired.", Toast.LENGTH_SHORT).show();
         }
+    }
 
+    private void startDiscover()
+    {
+        if (mBluetoothAdapter == null) { return; }
+
+        // If we're already discovering, stop it
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+        mBluetoothAdapter.startDiscovery();
     }
 
     @Override
@@ -130,11 +177,14 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId())
         {
-            case R.id.menu_discover:
+            case R.id.menu_discoverable:
                 callDiscoverableIntent();
                 break;
             case R.id.menu_paired_devices:
                 getPairedDevices();
+                break;
+            case R.id.menu_discover:
+                startDiscover();
                 break;
         }
 
